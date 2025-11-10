@@ -18,7 +18,7 @@
     "vite-plugin-solid": "^2.11.6"
   },
   "dependencies": {
-    "input-forge": "file: ..",
+    "input-forge": "file:..",
     "rxjs": "^7.8.2",
     "solid-js": "^1.9.5"
   }
