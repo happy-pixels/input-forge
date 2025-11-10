@@ -1,14 +1,14 @@
-import { Subject } from "rxjs";
-import { takeUntil } from "rxjs/operators";
-import { InputSource } from "./input-source";
-import { Command, AxesCommand, TickCommand } from "./command";
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+import { InputSource } from './input-source';
+import { Command, AxesCommand, TickCommand } from './command';
 import {
     InputMap,
     AxesInput,
     SingleInputEntry,
     AxesInputEntry,
-} from "./input-map";
-import { Inputs } from "./input-utils";
+} from './input-map';
+import { Inputs } from './input-utils';
 
 export class InputManager {
     private _inputMapStack: InputMap[] = [];
@@ -24,7 +24,7 @@ export class InputManager {
         this._inputSource.singleInputTrigger$
             .pipe(takeUntil(this._disconnect$))
             .subscribe((key: string) => {
-                if (!!this._inputMapStack.length) {
+                if (this._inputMapStack.length > 0) {
                     const commands = this.getCommands(key);
                     commands.forEach((command: Command) => {
                         command.trigger();
@@ -43,7 +43,7 @@ export class InputManager {
         this._inputSource.singleInputUpdate$
             .pipe(takeUntil(this._disconnect$))
             .subscribe((key: string) => {
-                if (!!this._inputMapStack.length) {
+                if (this._inputMapStack.length > 0) {
                     const commands = this.getCommands(key);
                     commands.forEach((command: Command) => {
                         command.update();
@@ -62,7 +62,7 @@ export class InputManager {
         this._inputSource.singleInputRelease$
             .pipe(takeUntil(this._disconnect$))
             .subscribe((key: string) => {
-                if (!!this._inputMapStack.length) {
+                if (this._inputMapStack.length > 0) {
                     const commands = this.getCommands(key);
                     commands.forEach((command: Command) => {
                         command.release();
@@ -81,7 +81,7 @@ export class InputManager {
         this._inputSource.axesInputTrigger$
             .pipe(takeUntil(this._disconnect$))
             .subscribe((data: { name: string; axes: AxesInput }) => {
-                if (!!this._inputMapStack.length) {
+                if (this._inputMapStack.length > 0) {
                     const commands = this.getAxesCommands(data.name);
                     commands.forEach((command: AxesCommand) => {
                         command.trigger(data.axes);
@@ -92,7 +92,7 @@ export class InputManager {
         this._inputSource.axesInputUpdate$
             .pipe(takeUntil(this._disconnect$))
             .subscribe((data: { name: string; axes: AxesInput }) => {
-                if (!!this._inputMapStack.length) {
+                if (this._inputMapStack.length > 0) {
                     const commands = this.getAxesCommands(data.name);
                     commands.forEach((command: AxesCommand) => {
                         command.update(data.axes);
@@ -103,7 +103,7 @@ export class InputManager {
         this._inputSource.axesInputRelease$
             .pipe(takeUntil(this._disconnect$))
             .subscribe((data: { name: string; axes: AxesInput }) => {
-                if (!!this._inputMapStack.length) {
+                if (this._inputMapStack.length > 0) {
                     const commands = this.getAxesCommands(data.name);
                     commands.forEach((command: AxesCommand) => {
                         command.release();
@@ -114,7 +114,7 @@ export class InputManager {
         this._inputSource.tick$
             .pipe(takeUntil(this._disconnect$))
             .subscribe((delta: number) => {
-                if (!!this._inputMapStack.length) {
+                if (this._inputMapStack.length > 0) {
                     const commands = this.getTickCommands();
                     commands.forEach((command: TickCommand) => {
                         command.tick(delta);
@@ -144,7 +144,9 @@ export class InputManager {
 
     private getCommands(key: string): Command[] {
         const inputMap = this._inputMapStack.at(-1);
-        if (!inputMap?.singleInput) return [];
+        if (!inputMap?.singleInput) {
+            return [];
+        }
 
         if (this._commandCache.has(key)) {
             return this._commandCache.get(key)!;
@@ -219,7 +221,9 @@ export class InputManager {
 
     private getTickCommands(): TickCommand[] {
         const inputMap = this._inputMapStack.at(-1);
-        if (!inputMap?.singleInput) return [];
+        if (!inputMap?.singleInput) {
+            return [];
+        }
 
         if (this._commandCache.has(Inputs.SYSTEM_TICK)) {
             return this._commandCache.get(Inputs.SYSTEM_TICK)! as TickCommand[];
