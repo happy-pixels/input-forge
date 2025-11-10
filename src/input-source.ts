@@ -1,8 +1,8 @@
-import { Subject, fromEvent, interval } from "rxjs";
-import { takeUntil, filter, map } from "rxjs/operators";
+import { Subject, fromEvent, interval } from 'rxjs';
+import { takeUntil, filter, map } from 'rxjs/operators';
 
-import { buttonMap, Inputs, symbolToConstant } from "./input-utils";
-import { AxesInput } from "./input-map";
+import { buttonMap, Inputs, symbolToConstant } from './input-utils';
+import { AxesInput } from './input-map';
 
 export class InputSource {
     private disconnect$ = new Subject<void>();
@@ -57,7 +57,7 @@ export class InputSource {
         this.disconnect$.complete();
         this.disconnect$ = new Subject<void>();
 
-        fromEvent<KeyboardEvent>(document, "keydown")
+        fromEvent<KeyboardEvent>(document, 'keydown')
             .pipe(
                 map((e) => symbolToConstant(e.key.toLowerCase())),
                 filter(
@@ -71,7 +71,7 @@ export class InputSource {
                 this.keyPress.push(key);
             });
 
-        fromEvent<KeyboardEvent>(document, "keyup")
+        fromEvent<KeyboardEvent>(document, 'keyup')
             .pipe(
                 map((e) => symbolToConstant(e.key.toLowerCase())),
                 takeUntil(this.disconnect$)
@@ -80,13 +80,13 @@ export class InputSource {
                 this.keyRelease.push(key);
             });
 
-        fromEvent<GamepadEvent>(window, "gamepadconnected").subscribe(
+        fromEvent<GamepadEvent>(window, 'gamepadconnected').subscribe(
             (e: GamepadEvent) => {
                 this.controllerIndex = e.gamepad.index;
             }
         );
 
-        fromEvent<GamepadEvent>(window, "gamepaddisconnected").subscribe(
+        fromEvent<GamepadEvent>(window, 'gamepaddisconnected').subscribe(
             (e: GamepadEvent) => {
                 if (this.controllerIndex === e.gamepad.index) {
                     this.controllerIndex = -1;
@@ -142,7 +142,9 @@ export class InputSource {
 
     private gamepadButtonTriggers() {
         const gamepad = navigator.getGamepads()[this.controllerIndex];
-        if (!gamepad) return;
+        if (!gamepad) {
+            return;
+        }
         const buttons = gamepad.buttons.map((button) => button.value);
         this.controllerButtons.forEach((button: number, index: number) => {
             const change = buttons[index] - button;
@@ -157,12 +159,14 @@ export class InputSource {
 
     private gamepadAxesTriggers() {
         const gamepad = navigator.getGamepads()[this.controllerIndex];
-        if (!gamepad) return;
+        if (!gamepad) {
+            return;
+        }
         const axes = gamepad.axes.map((axis) => {
             const hasValue = Math.abs(axis) > this._deadzone;
             return [hasValue ? 1 : 0, hasValue ? axis : 0];
         });
-        let changes: boolean[] = [];
+        const changes: boolean[] = [];
         this.controllerAxes.forEach((axis: number[], index: number) => {
             const change = axes[index][0] - axis[0];
             changes[index] = !!Math.abs(change);
@@ -194,7 +198,7 @@ export class InputSource {
 
     private gamepadButtonUpdate() {
         this.controllerButtons.forEach((button: number, index: number) => {
-            if (!!button) {
+            if (button) {
                 this._singleInputUpdate$.next(buttonMap[index]);
             }
         });
