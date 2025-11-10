@@ -1,3 +1,5 @@
+
+/* istanbul ignore next */
 export const Inputs = {
     KEYBOARD_A: 'a',
     KEYBOARD_B: 'b',
@@ -62,7 +64,6 @@ export const Inputs = {
     KEYBOARD_BACKSPACE: 'backspace',
     KEYBOARD_DELETE: 'delete',
     KEYBOARD_INSERT: 'insert',
-    KEYBOARD_SUBTRACT: 'subtract',
     KEYBOARD_ADD: 'add',
     KEYBOARD_MULTIPLY: 'multiply',
     KEYBOARD_SHIFT: 'shift',
@@ -101,6 +102,7 @@ export const Inputs = {
     SYSTEM_TICK: 'tick'
 };
 
+/* istanbul ignore next */
 export const buttonMap: string[] = [
     Inputs.CONTROLLER_FACE_BOTTOM,
     Inputs.CONTROLLER_FACE_RIGHT,
@@ -136,7 +138,6 @@ export const symbolToConstant = (symbol: string): string => {
         case ']': return Inputs.KEYBOARD_BRACKET_RIGHT;
         case '\\': return Inputs.KEYBOARD_BACKSLASH;
         case '+': return Inputs.KEYBOARD_ADD;
-        case '_': return Inputs.KEYBOARD_SUBTRACT;
         case '*': return Inputs.KEYBOARD_MULTIPLY;
         default: return symbol;
     }

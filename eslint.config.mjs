@@ -25,7 +25,8 @@ export default defineConfig([
 			'coverage/**', 
 			'**/*.mjs', 
 			'**/*.js',
-			'eslint.config.mjs',
+			'**/*.config.mjs',
+			'**/*.config.ts',
 			'scripts/**',
             'example/**',
 		]

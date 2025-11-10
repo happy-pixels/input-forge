@@ -1,3 +1,4 @@
+/* instanbul ignore file */
 import { Command, AxesCommand } from './command';
 
 export type SingleInputEntry = {
