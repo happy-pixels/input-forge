@@ -1,3 +1,4 @@
+/* instanbul ignore file */
 export * from './command';
 export * from './input-map';
 export * from './input-source';
