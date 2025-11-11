@@ -1,3 +1,4 @@
+import type { AxesInput } from './input-map';
 export declare const Inputs: {
     KEYBOARD_A: string;
     KEYBOARD_B: string;
@@ -98,7 +99,9 @@ export declare const Inputs: {
     CONTROLLER_LEFT_STICK: string;
     CONTROLLER_RIGHT_STICK: string;
     SYSTEM_TICK: string;
+    UNDEFINED_INPUT: string;
 };
 export declare const buttonMap: string[];
 export declare const symbolToConstant: (symbol: string) => string;
+export declare const normalizeAxesInput: (input: [number, number] | AxesInput) => AxesInput;
 //# sourceMappingURL=input-utils.d.ts.map

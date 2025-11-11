@@ -1,7 +1,6 @@
 /* instanbul ignore file */
-export * from './command';
-export * from './input-map';
-export * from './input-source';
-export * from './input-manager';
-export * from './input-utils';
+export { Command, AxesCommand, TickCommand } from './command';
+export { InputSource } from './input-source';
+export { InputManager } from './input-manager';
+export { Inputs, buttonMap, normalizeAxesInput, symbolToConstant } from './input-utils';
 //# sourceMappingURL=index.js.map

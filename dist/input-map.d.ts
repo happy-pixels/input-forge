@@ -27,6 +27,12 @@ export type AxesInputMap = {
 };
 export type InputMap = {
     singleInput: SingleInputMap;
+    axesInput?: AxesInputMap;
+} | {
+    singleInput?: SingleInputMap;
+    axesInput: AxesInputMap;
+} | {
+    singleInput: SingleInputMap;
     axesInput: AxesInputMap;
 };
 export type AxesInput = {

@@ -166,7 +166,7 @@ export class InputManager {
 
     private getAxesCommands(name: string): AxesCommand[] {
         const inputMap = this._inputMapStack.at(-1);
-        return Object.values(inputMap!.axesInput)
+        return Object.values(inputMap?.axesInput ?? {})
             .filter((entry: AxesInputEntry) => entry.controllerstick === name)
             .map((entry: AxesInputEntry) => entry.command);
     }
@@ -206,10 +206,10 @@ export class InputManager {
                         axis = [0, 1];
                         break;
                     case entry.keyboardAxes?.horizontal.left:
-                        axis = [1, -1];
+                        axis = [-1, 0];
                         break;
                     case entry.keyboardAxes?.horizontal.right:
-                        axis = [1, 1];
+                        axis = [1, 0];
                         break;
                 }
                 return {

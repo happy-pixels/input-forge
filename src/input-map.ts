@@ -25,10 +25,10 @@ export type AxesInputMap = {
     [key: string]: AxesInputEntry;
 };
 
-export type InputMap = {
-    singleInput: SingleInputMap;
-    axesInput: AxesInputMap;
-};
+export type InputMap = 
+    | { singleInput: SingleInputMap; axesInput?: AxesInputMap }
+    | { singleInput?: SingleInputMap; axesInput: AxesInputMap }
+    | { singleInput: SingleInputMap; axesInput: AxesInputMap };
 
 export type AxesInput = {
     x: number;
