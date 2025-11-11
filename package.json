@@ -4,7 +4,10 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "lint": "node scripts/lint.mjs"
+    "lint": "node scripts/lint.mjs",
+    "build": "tsc",
+    "dev": "tsc -w",
+    "prepare": "pnpm run build"
   },
   "keywords": [],
   "author": "",
