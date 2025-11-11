@@ -1,6 +1,6 @@
-export * from './command';
-export * from './input-map';
-export * from './input-source';
-export * from './input-manager';
-export * from './input-utils';
+export { Command, AxesCommand, TickCommand } from './command';
+export { AxesInput, AxesInputEntry, AxesInputMap, InputMap, SingleInputEntry, SingleInputMap } from './input-map';
+export { InputSource } from './input-source';
+export { InputManager } from './input-manager';
+export { Inputs, buttonMap, normalizeAxesInput, symbolToConstant } from './input-utils';
 //# sourceMappingURL=index.d.ts.map

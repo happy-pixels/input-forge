@@ -1,4 +1,3 @@
-/* istanbul ignore next */
 export const Inputs = {
     KEYBOARD_A: 'a',
     KEYBOARD_B: 'b',
@@ -98,7 +97,8 @@ export const Inputs = {
     CONTROLLER_DPAD_RIGHT: 'dpad_right',
     CONTROLLER_LEFT_STICK: 'left_stick',
     CONTROLLER_RIGHT_STICK: 'right_stick',
-    SYSTEM_TICK: 'tick'
+    SYSTEM_TICK: 'tick',
+    UNDEFINED_INPUT: 'undefined_input'
 };
 /* istanbul ignore next */
 export const buttonMap = [
@@ -138,5 +138,11 @@ export const symbolToConstant = (symbol) => {
         case '*': return Inputs.KEYBOARD_MULTIPLY;
         default: return symbol;
     }
+};
+export const normalizeAxesInput = (input) => {
+    if (Array.isArray(input)) {
+        return { x: input[0], y: input[1] };
+    }
+    return input;
 };
 //# sourceMappingURL=input-utils.js.map
