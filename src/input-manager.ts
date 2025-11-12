@@ -72,7 +72,7 @@ export class InputManager {
                     axesCommands.forEach(
                         (entry: { command: AxesCommand; axis: [number, number] }) => {
                             const command = entry.command;
-                            command.update([entry.axis[0], 0]);
+                            command.release();
                         }
                     );
                 }
@@ -154,10 +154,7 @@ export class InputManager {
 
 
         const commands = Object.values(inputMap!.singleInput)
-            .filter(
-                (entry: SingleInputEntry) =>
-                    entry.keyboardInput === key || entry.controllerInput === key
-            )
+            .filter((entry: SingleInputEntry) => entry.keyboardInput === key || entry.controllerInput === key)
             .map((entry: SingleInputEntry) => entry.command);
 
         this._commandCache.set(key, commands);

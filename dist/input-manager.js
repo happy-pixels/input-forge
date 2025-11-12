@@ -50,7 +50,7 @@ export class InputManager {
                 const axesCommands = this.getAxesByKey(key);
                 axesCommands.forEach((entry) => {
                     const command = entry.command;
-                    command.update([entry.axis[0], 0]);
+                    command.release();
                 });
             }
         });
