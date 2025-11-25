@@ -26,6 +26,7 @@ export class InputSource {
     private keyPress: string[] = [];
     private keyRelease: string[] = [];
     private activeKeys: string[] = [];
+    private customInputs: string[] = [];
 
     private controllerIndex: number = -1;
     private controllerButtons: number[] = Array(17).fill(0);
@@ -107,6 +108,10 @@ export class InputSource {
     public startTick() {
         this._useTick = true;
         this._lastTickTime = performance.now();
+    }
+
+    public triggerCustomInput(input: string) {
+        this.customInputs.push(input);
     }
 
     private keyboardTriggers() {
@@ -228,6 +233,14 @@ export class InputSource {
         }
     }
 
+    private customInputUpdate() {
+        let customInput: string;
+        while(this.customInputs.length) {
+            customInput = this.customInputs.pop() as string;
+            this._singleInputUpdate$.next(customInput);
+        }
+    }
+
     private startGameLoop() {
         interval(1000 / this._fps)
             .pipe(takeUntil(this.disconnect$))
@@ -242,6 +255,8 @@ export class InputSource {
                     this.gamepadAxesUpdate();
                     this.gamepadButtonTriggers();
                     this.gamepadAxesTriggers();
+
+                    this.customInputUpdate();
 
                     this.tick();
                     this._isWorking = false;

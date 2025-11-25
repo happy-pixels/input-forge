@@ -16,6 +16,7 @@ export declare class InputSource {
     private keyPress;
     private keyRelease;
     private activeKeys;
+    private customInputs;
     private controllerIndex;
     private controllerButtons;
     private controllerAxes;
@@ -38,6 +39,7 @@ export declare class InputSource {
     constructor(fps?: number, deadzone?: number);
     private init;
     startTick(): void;
+    triggerCustomInput(input: string): void;
     private keyboardTriggers;
     private keyboardReleases;
     private keyBoardUpdate;
@@ -46,6 +48,7 @@ export declare class InputSource {
     private gamepadButtonUpdate;
     private gamepadAxesUpdate;
     private tick;
+    private customInputUpdate;
     private startGameLoop;
     destroy(): void;
 }

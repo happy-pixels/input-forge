@@ -119,7 +119,7 @@ export class InputManager {
             return this._commandCache.get(key);
         }
         const commands = Object.values(inputMap.singleInput)
-            .filter((entry) => entry.keyboardInput === key || entry.controllerInput === key)
+            .filter((entry) => entry.keyboardInput === key || entry.controllerInput === key || entry.customInput === key)
             .map((entry) => entry.command);
         this._commandCache.set(key, commands);
         return commands;
@@ -188,6 +188,9 @@ export class InputManager {
             .map((entry) => entry.command);
         this._commandCache.set(Inputs.SYSTEM_TICK, commands);
         return commands;
+    }
+    triggerCustomInput(input) {
+        this._inputSource.triggerCustomInput(input);
     }
     destroy() {
         this._disconnect$.next();
