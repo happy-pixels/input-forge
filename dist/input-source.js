@@ -193,7 +193,7 @@ export class InputSource {
         let customInput;
         while (this.customInputs.length) {
             customInput = this.customInputs.pop();
-            this._singleInputUpdate$.next(customInput);
+            this._singleInputTrigger$.next(customInput);
         }
     }
     startGameLoop() {
