@@ -237,7 +237,7 @@ export class InputSource {
         let customInput: string;
         while(this.customInputs.length) {
             customInput = this.customInputs.pop() as string;
-            this._singleInputUpdate$.next(customInput);
+            this._singleInputTrigger$.next(customInput);
         }
     }
 
