@@ -13,6 +13,7 @@ export declare class InputManager {
     private getAxesCommands;
     private getAxesByKey;
     private getTickCommands;
+    triggerCustomInput(input: string): void;
     destroy(): void;
 }
 //# sourceMappingURL=input-manager.d.ts.map

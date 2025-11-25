@@ -18,6 +18,7 @@ export class InputSource {
     keyPress = [];
     keyRelease = [];
     activeKeys = [];
+    customInputs = [];
     controllerIndex = -1;
     controllerButtons = Array(17).fill(0);
     controllerAxes = [
@@ -73,6 +74,9 @@ export class InputSource {
     startTick() {
         this._useTick = true;
         this._lastTickTime = performance.now();
+    }
+    triggerCustomInput(input) {
+        this.customInputs.push(input);
     }
     keyboardTriggers() {
         const keyPress = this.keyPress.slice();
@@ -185,6 +189,13 @@ export class InputSource {
             this._tick$.next(delta);
         }
     }
+    customInputUpdate() {
+        let customInput;
+        while (this.customInputs.length) {
+            customInput = this.customInputs.pop();
+            this._singleInputUpdate$.next(customInput);
+        }
+    }
     startGameLoop() {
         interval(1000 / this._fps)
             .pipe(takeUntil(this.disconnect$))
@@ -198,6 +209,7 @@ export class InputSource {
                 this.gamepadAxesUpdate();
                 this.gamepadButtonTriggers();
                 this.gamepadAxesTriggers();
+                this.customInputUpdate();
                 this.tick();
                 this._isWorking = false;
             }

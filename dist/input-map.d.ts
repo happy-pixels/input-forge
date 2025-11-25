@@ -3,6 +3,7 @@ export type SingleInputEntry = {
     keyboardInput?: string;
     controllerInput?: string;
     systemInput?: string;
+    customInput?: string;
     command: Command;
 };
 export type AxesInputEntry = {
