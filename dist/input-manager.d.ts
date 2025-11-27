@@ -9,6 +9,9 @@ export declare class InputManager {
     pushInputMap(inputMap: InputMap): void;
     setInputMap(inputMap: InputMap): void;
     popInputMap(): void;
+    hasInputMap(id: string): boolean;
+    removeInputMap(id: string): void;
+    currentInputMap(): string | null;
     private getCommands;
     private getAxesCommands;
     private getAxesByKey;

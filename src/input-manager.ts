@@ -142,6 +142,20 @@ export class InputManager {
         this.invalidateCommandCache();
     }
 
+    public hasInputMap(id: string): boolean {
+        return this._inputMapStack.some((map: InputMap) => map.id === id);
+    }
+
+    public removeInputMap(id: string): void {
+        this._inputMapStack = this._inputMapStack.filter((map: InputMap) => map.id !== id);
+        this.invalidateCommandCache();
+    }
+
+    public currentInputMap(): string | null {
+        const inputMap = this._inputMapStack.at(-1);
+        return inputMap ? inputMap.id : null;
+    }
+
     private getCommands(key: string): Command[] {
         const inputMap = this._inputMapStack.at(-1);
         if (!inputMap?.singleInput) {
