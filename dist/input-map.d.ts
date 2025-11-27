@@ -27,12 +27,15 @@ export type AxesInputMap = {
     [key: string]: AxesInputEntry;
 };
 export type InputMap = {
+    id: string;
     singleInput: SingleInputMap;
     axesInput?: AxesInputMap;
 } | {
+    id: string;
     singleInput?: SingleInputMap;
     axesInput: AxesInputMap;
 } | {
+    id: string;
     singleInput: SingleInputMap;
     axesInput: AxesInputMap;
 };

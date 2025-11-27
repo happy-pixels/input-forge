@@ -110,6 +110,17 @@ export class InputManager {
         this._inputMapStack.pop();
         this.invalidateCommandCache();
     }
+    hasInputMap(id) {
+        return this._inputMapStack.some((map) => map.id === id);
+    }
+    removeInputMap(id) {
+        this._inputMapStack = this._inputMapStack.filter((map) => map.id !== id);
+        this.invalidateCommandCache();
+    }
+    currentInputMap() {
+        const inputMap = this._inputMapStack.at(-1);
+        return inputMap ? inputMap.id : null;
+    }
     getCommands(key) {
         const inputMap = this._inputMapStack.at(-1);
         if (!inputMap?.singleInput) {
