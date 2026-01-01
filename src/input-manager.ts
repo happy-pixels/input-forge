@@ -252,6 +252,14 @@ export class InputManager {
         this._inputSource.triggerCustomInput(input);
     }
 
+    public triggerCustomAxesInput(name: string, axes: AxesInput | [number, number]): void {
+        this._inputSource.triggerCustomAxesInput(name, axes);
+    }
+
+    public releaseCustomeAxesInput(name: string): void {
+        this._inputSource.releaseCustomAxesInput(name);
+    }
+
     public destroy(): void {
         this._disconnect$.next();
         this._disconnect$.complete();

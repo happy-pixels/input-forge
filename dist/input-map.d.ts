@@ -18,6 +18,7 @@ export type AxesInputEntry = {
         };
     };
     controllerstick?: string;
+    customAxesInput?: string;
     command: AxesCommand;
 };
 export type SingleInputMap = {

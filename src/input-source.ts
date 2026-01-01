@@ -27,6 +27,7 @@ export class InputSource {
     private keyRelease: string[] = [];
     private activeKeys: string[] = [];
     private customInputs: string[] = [];
+    private customAxesInputs: { name: string; axes: AxesInput | [number, number] }[] = [];
 
     private controllerIndex: number = -1;
     private controllerButtons: number[] = Array(17).fill(0);
@@ -112,6 +113,26 @@ export class InputSource {
 
     public triggerCustomInput(input: string) {
         this.customInputs.push(input);
+    }
+
+    public triggerCustomAxesInput(name: string, axes: AxesInput | [number, number]) {
+        this.customAxesInputs.push({ name, axes, });
+        this._axesInputTrigger$.next({ name, axes: axes instanceof Array ? { x: axes[0], y: axes[1] } : axes });
+    }
+
+    public releaseCustomAxesInput(name: string) {
+        const index = this.customAxesInputs.findIndex((input) => input.name === name);
+        if (index !== -1) {
+            const axes = this.customAxesInputs[index].axes;
+            this.customAxesInputs.splice(index, 1);
+            this._axesInputRelease$.next({ name, axes: axes instanceof Array ? { x: axes[0], y: axes[1] } : axes });
+        }
+    }
+
+    private customAxesUpdate() {
+        this.customAxesInputs.forEach((input) => {
+            this._axesInputUpdate$.next({ name: input.name, axes: input.axes instanceof Array ? { x: input.axes[0], y: input.axes[1] } : input.axes });
+        });
     }
 
     private keyboardTriggers() {
@@ -257,6 +278,7 @@ export class InputSource {
                     this.gamepadAxesTriggers();
 
                     this.customInputUpdate();
+                    this.customAxesUpdate();
 
                     this.tick();
                     this._isWorking = false;

@@ -15,6 +15,7 @@ export type AxesInputEntry = {
         horizontal: { left: string, right: string }
     };
     controllerstick?: string;
+    customAxesInput?: string;
     command: AxesCommand;
 };
 

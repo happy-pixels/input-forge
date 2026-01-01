@@ -1,4 +1,4 @@
-import { InputMap } from './input-map';
+import { InputMap, AxesInput } from './input-map';
 export declare class InputManager {
     private _inputMapStack;
     private _disconnect$;
@@ -17,6 +17,8 @@ export declare class InputManager {
     private getAxesByKey;
     private getTickCommands;
     triggerCustomInput(input: string): void;
+    triggerCustomAxesInput(name: string, axes: AxesInput | [number, number]): void;
+    releaseCustomeAxesInput(name: string): void;
     destroy(): void;
 }
 //# sourceMappingURL=input-manager.d.ts.map

@@ -17,6 +17,7 @@ export declare class InputSource {
     private keyRelease;
     private activeKeys;
     private customInputs;
+    private customAxesInputs;
     private controllerIndex;
     private controllerButtons;
     private controllerAxes;
@@ -40,6 +41,9 @@ export declare class InputSource {
     private init;
     startTick(): void;
     triggerCustomInput(input: string): void;
+    triggerCustomAxesInput(name: string, axes: AxesInput | [number, number]): void;
+    releaseCustomAxesInput(name: string): void;
+    private customAxesUpdate;
     private keyboardTriggers;
     private keyboardReleases;
     private keyBoardUpdate;

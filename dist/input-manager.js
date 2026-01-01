@@ -203,6 +203,12 @@ export class InputManager {
     triggerCustomInput(input) {
         this._inputSource.triggerCustomInput(input);
     }
+    triggerCustomAxesInput(name, axes) {
+        this._inputSource.triggerCustomAxesInput(name, axes);
+    }
+    releaseCustomeAxesInput(name) {
+        this._inputSource.releaseCustomAxesInput(name);
+    }
     destroy() {
         this._disconnect$.next();
         this._disconnect$.complete();
