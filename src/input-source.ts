@@ -1,3 +1,4 @@
+// TODO: dead code - delete file.
 import { Subject, fromEvent, interval } from 'rxjs';
 import { takeUntil, filter, map } from 'rxjs/operators';
 
@@ -116,8 +117,9 @@ export class InputSource {
     }
 
     public triggerCustomAxesInput(name: string, axes: AxesInput | [number, number]) {
+        console.log('Adding custom axes input:', name, axes);
         this.customAxesInputs.push({ name, axes, });
-        this._axesInputTrigger$.next({ name, axes: axes instanceof Array ? { x: axes[0], y: axes[1] } : axes });
+        // this._axesInputTrigger$.next({ name, axes: axes instanceof Array ? { x: axes[0], y: axes[1] } : axes });
     }
 
     public releaseCustomAxesInput(name: string) {

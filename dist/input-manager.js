@@ -1,3 +1,4 @@
+// TODO: dead code - delete file.
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { InputSource } from './input-source';
@@ -57,6 +58,8 @@ export class InputManager {
         this._inputSource.axesInputTrigger$
             .pipe(takeUntil(this._disconnect$))
             .subscribe((data) => {
+            console.log('Axes input triggered:', data);
+            console.log('Current input map stack:', this._inputMapStack);
             if (this._inputMapStack.length > 0) {
                 const commands = this.getAxesCommands(data.name);
                 commands.forEach((command) => {

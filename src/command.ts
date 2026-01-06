@@ -1,3 +1,4 @@
+// TODO: dead code - delete file.
 import { AxesInput } from './input-map';
 
 export abstract class Command<T = void> {
