@@ -1,3 +1,4 @@
+// TODO: dead code - delete file.
 import { Subject, fromEvent, interval } from 'rxjs';
 import { takeUntil, filter, map } from 'rxjs/operators';
 import { buttonMap, Inputs, symbolToConstant } from './input-utils';
@@ -80,8 +81,9 @@ export class InputSource {
         this.customInputs.push(input);
     }
     triggerCustomAxesInput(name, axes) {
+        console.log('Adding custom axes input:', name, axes);
         this.customAxesInputs.push({ name, axes, });
-        this._axesInputTrigger$.next({ name, axes: axes instanceof Array ? { x: axes[0], y: axes[1] } : axes });
+        // this._axesInputTrigger$.next({ name, axes: axes instanceof Array ? { x: axes[0], y: axes[1] } : axes });
     }
     releaseCustomAxesInput(name) {
         const index = this.customAxesInputs.findIndex((input) => input.name === name);

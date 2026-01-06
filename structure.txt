@@ -1,0 +1,49 @@
+src/
+├── constants/
+│   ├── inputs.ts                 // Single Inputs object (all constants)
+│   └── gamepad-button-map.ts     // buttonMap array (used internally by gamepad-source)
+├── core/
+│   ├── input-manager.ts          // Orchestration only
+│   ├── input-map-stack.ts        // Stack management + caching
+│   └── command-resolver.ts       // Command lookup logic
+├── sources/
+│   ├── input-source-base.ts      // Abstract base
+│   ├── keyboard-source.ts        // Keyboard events only
+│   ├── gamepad-source.ts         // Gamepad polling only
+│   └── custom-source.ts          // Custom input API
+├── processors/
+│   ├── deadzone-processor.ts     // Axis normalization
+│   └── input-normalizer.ts       // Convert all inputs to standard format
+├── types/
+│   ├── commands.ts               // Abstract classes defining the command types
+│   ├── input-events.ts           // Event types
+│   ├── input-state.ts            // State types
+│   └── input-map.ts              // defines what input maps look like
+├── utils.ts                      // utility functions
+└── index.ts                      // output items for external use.
+
+
+1. Types layer (foundation) ✓ Already discussed
+
+types/axes-input.ts
+types/input-state.ts
+types/input-events.ts
+Keep existing types/commands.ts and types/input-map.ts
+
+2. Input sources (data collection)
+
+sources/input-source-base.ts - Abstract interface
+sources/keyboard-source.ts - Keyboard event handling
+sources/gamepad-source.ts - Gamepad polling
+sources/custom-source.ts - Programmatic input API
+
+3. Processors (data transformation)
+
+processors/deadzone-processor.ts - Apply deadzone to axes
+processors/input-normalizer.ts - Convert raw inputs to standard events
+
+4. Core layer (orchestration)
+
+core/command-resolver.ts - Map inputs to commands
+core/input-map-stack.ts - Manage stack with caching
+core/input-manager.ts - Wire everything toget

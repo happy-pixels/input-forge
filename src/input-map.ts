@@ -1,3 +1,4 @@
+// TODO: dead code - delete file.
 /* instanbul ignore file */
 import { Command, AxesCommand } from './command';
 

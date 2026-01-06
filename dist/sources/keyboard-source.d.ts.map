@@ -1,0 +1,1 @@
+{"version":3,"file":"keyboard-source.d.ts","sourceRoot":"","sources":["../../src/sources/keyboard-source.ts"],"names":[],"mappings":"AAEA,OAAO,EAAE,eAAe,EAAE,MAAM,qBAAqB,CAAC;AACtD,OAAO,KAAK,EAAE,gBAAgB,EAAoB,MAAM,sBAAsB,CAAC;AAG/E,qBAAa,cAAe,SAAQ,eAAe;IAC/C,OAAO,CAAC,KAAK,CAIX;;IAOF,SAAS,CAAC,IAAI,IAAI,IAAI;IAmCf,WAAW,IAAI,IAAI;IAUnB,QAAQ,IAAI,gBAAgB;CAMtC"}
