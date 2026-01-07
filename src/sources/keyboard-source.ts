@@ -2,7 +2,7 @@ import { fromEvent } from 'rxjs';
 import { map, filter, takeUntil } from 'rxjs/operators';
 import { InputSourceBase } from './input-source-base';
 import type { InputSourceState, SingleInputState } from '../types/input-state';
-import { symbolToConstant } from '../input-utils';
+import { symbolToConstant } from '../utils';
 
 export class KeyboardSource extends InputSourceBase {
     private state: SingleInputState = {
