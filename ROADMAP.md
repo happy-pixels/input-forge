@@ -133,10 +133,9 @@ Improve developer workflow.
 
 ## Phase 10: Future Features
 
-_Reserved for user-requested features._
-
 - [x] **10.1** Add `activeInputDevice$` Observable to identify input source (keyboard, xbox, playstation, other_controller)
 - [ ] **10.2** Add multi-controller support
+- [ ] **10.3** Add partial map overrides - allow pushed maps to selectively override or disable specific inputs while unspecified inputs fall through to the underlying map
 
 ---
 
