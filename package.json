@@ -1,6 +1,7 @@
 {
   "name": "@happy-pixels/input-forge",
-  "version": "0.3.0",
+  "version": "0.3.1",
+  "description": "A platform-agnostic input management library for JavaScript games and applications. Provides a unified API for handling keyboard, gamepad, and custom input sources with support for dynamic input mapping and the command pattern.",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
@@ -10,6 +11,9 @@
     }
   },
   "type": "module",
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "lint": "node scripts/lint.mjs",
     "build": "tsc",
@@ -20,10 +24,28 @@
     "docs": "typedoc",
     "prepare": "pnpm run build"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "input",
+    "gamepad",
+    "keyboard",
+    "controller",
+    "game",
+    "input-management",
+    "rxjs",
+    "command-pattern",
+    "xbox",
+    "playstation"
+  ],
+  "author": "Happy Pixels",
   "license": "ISC",
-  "description": "",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/happy-pixels/input-forge.git"
+  },
+  "bugs": {
+    "url": "https://github.com/happy-pixels/input-forge/issues"
+  },
+  "homepage": "https://happy-pixels.github.io/input-forge/",
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
     "@eslint/js": "^9.39.1",
