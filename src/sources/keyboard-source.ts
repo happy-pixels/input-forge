@@ -19,7 +19,7 @@ export class KeyboardSource extends InputSourceBase {
     protected init(): void {
         fromEvent<KeyboardEvent>(window, 'keydown')
             .pipe(
-                map((e) => symbolToConstant(e.key.toLocaleLowerCase())),
+                map((e) => symbolToConstant(e.key.toLowerCase())),
                 filter((key) => !this.state.activeInputs.has(key)),
                 takeUntil(this.disconnect$)
             )

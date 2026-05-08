@@ -1,5 +1,3 @@
-
-
 export const Inputs = {
     KEYBOARD_A: 'a',
     KEYBOARD_B: 'b',
@@ -103,8 +101,14 @@ export const Inputs = {
     UNDEFINED_INPUT: 'undefined_input'
 };
 
+/**
+ * Union type of all valid input key values.
+ * Use this for strict type checking of input keys.
+ */
+export type InputKey = typeof Inputs[keyof typeof Inputs];
+
 /* istanbul ignore next */
-export const buttonMap: string[] = [
+export const buttonMap: InputKey[] = [
     Inputs.CONTROLLER_FACE_BOTTOM,
     Inputs.CONTROLLER_FACE_RIGHT,
     Inputs.CONTROLLER_FACE_LEFT,

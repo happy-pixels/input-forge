@@ -4,7 +4,11 @@ import type { AxesInput } from '../types/axes-input';
 export declare class CustomSource extends InputSourceBase {
     constructor();
     protected init(): void;
+    private validateKey;
+    private validateName;
     triggerInput(key: string): void;
+    updateInput(key: string): void;
+    releaseInput(key: string): void;
     triggerAxesInput(name: string, axes: [number, number] | AxesInput): void;
     updateAxesInput(name: string, axes: [number, number] | AxesInput): void;
     releaseAxesInput(name: string): void;

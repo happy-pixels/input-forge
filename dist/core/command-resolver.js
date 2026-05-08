@@ -18,7 +18,7 @@ export class CommandResolver {
         return Object.values(inputMap.axesInput)
             .filter((entry) => entry.controllerStick === name ||
             entry.customAxesInput === name)
-            .map((entery) => entery.command);
+            .map((entry) => entry.command);
     }
     resolveKeyboardAxesInput(inputMap, key) {
         if (!inputMap.axesInput) {

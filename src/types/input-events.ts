@@ -10,7 +10,7 @@ export type AxesInputEvent = {
     type: 'trigger' | 'update' | 'release';
     name: string;
     axes: AxesInput;
-    source: 'keybarod' | 'gamepad' | 'custom';
+    source: 'gamepad' | 'custom';
 };
 
 export type TickEvent = {
@@ -19,3 +19,29 @@ export type TickEvent = {
 };
 
 export type InputEvent = SingleInputEvent | AxesInputEvent | TickEvent;
+
+/**
+ * Identifies the type of input device currently being used.
+ * Useful for displaying appropriate button prompts to the user.
+ *
+ * @example
+ * ```typescript
+ * import { InputDeviceType } from '@happy-pixels/input-forge';
+ *
+ * manager.activeInputDevice$.subscribe((device) => {
+ *     if (device === InputDeviceType.Xbox) {
+ *         showXboxPrompts();
+ *     }
+ * });
+ * ```
+ */
+export enum InputDeviceType {
+    /** Keyboard input detected */
+    Keyboard = 'keyboard',
+    /** Xbox controller detected (includes Xbox 360, Xbox One, Xbox Series) */
+    Xbox = 'xbox',
+    /** PlayStation controller detected (DualShock 3/4, DualSense) */
+    PlayStation = 'playstation',
+    /** Other gamepad/controller detected */
+    OtherController = 'other_controller'
+}

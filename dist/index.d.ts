@@ -1,11 +1,11 @@
 export { InputManager } from './core/input-manager';
 export { Command, AxesCommand, TickCommand } from './types/commands';
 export type { AxesInput } from './types/axes-input';
+export { InputDeviceType } from './types/input-events';
 export type { InputMap, SingleInputEntry, AxesInputEntry, KeyboardAxesConfig, SingleInputMap, AxesInputMap, } from './types/input-map';
 export { Inputs } from './constants/inputs';
+export type { InputKey } from './constants/inputs';
 export { symbolToConstant, normalizeAxesInput } from './utils';
-/**
- * Claude recommended the following exports. Including them but commented out
- * for the time being. Will revisit this later to see if it's something I want to include.
- */
+export { logger } from './core/logger';
+export type { LogMode, LogLevel } from './core/logger';
 //# sourceMappingURL=index.d.ts.map

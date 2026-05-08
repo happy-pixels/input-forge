@@ -34,7 +34,7 @@ export class CommandResolver {
                 entry.controllerStick === name ||
                 entry.customAxesInput === name
             )
-            .map((entery: AxesInputEntry) => entery.command);
+            .map((entry: AxesInputEntry) => entry.command);
     }
 
     public resolveKeyboardAxesInput(inputMap: InputMap, key: string): Array<{ command: AxesCommand; axis: AxesInput }> {

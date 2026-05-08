@@ -14,7 +14,7 @@ export class KeyboardSource extends InputSourceBase {
     }
     init() {
         fromEvent(window, 'keydown')
-            .pipe(map((e) => symbolToConstant(e.key.toLocaleLowerCase())), filter((key) => !this.state.activeInputs.has(key)), takeUntil(this.disconnect$))
+            .pipe(map((e) => symbolToConstant(e.key.toLowerCase())), filter((key) => !this.state.activeInputs.has(key)), takeUntil(this.disconnect$))
             .subscribe((key) => {
             this.state.pendingTriggers.push(key);
             this.state.activeInputs.add(key);

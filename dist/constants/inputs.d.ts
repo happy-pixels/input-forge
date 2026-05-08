@@ -100,5 +100,10 @@ export declare const Inputs: {
     SYSTEM_TICK: string;
     UNDEFINED_INPUT: string;
 };
-export declare const buttonMap: string[];
+/**
+ * Union type of all valid input key values.
+ * Use this for strict type checking of input keys.
+ */
+export type InputKey = typeof Inputs[keyof typeof Inputs];
+export declare const buttonMap: InputKey[];
 //# sourceMappingURL=inputs.d.ts.map

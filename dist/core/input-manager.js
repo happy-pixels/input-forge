@@ -1,9 +1,64 @@
-import { Subject, merge } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { Subject, merge, BehaviorSubject } from 'rxjs';
+import { takeUntil, filter, throttleTime, distinctUntilChanged } from 'rxjs/operators';
+import { InputDeviceType } from '../types/input-events';
 import { InputMapStack } from './input-map-stack';
 import { KeyboardSource } from '../sources/keyboard-source';
 import { GamepadSource } from '../sources/gamepad-source';
 import { CustomSource } from '../sources/custom-source';
+/**
+ * Central manager for handling all input sources and routing inputs to commands.
+ *
+ * InputManager automatically listens to keyboard and gamepad inputs, maps them to
+ * commands defined in your input maps, and calls the appropriate command lifecycle
+ * methods (trigger, update, release).
+ *
+ * ## Quick Start
+ * ```typescript
+ * import { InputManager, Command, Inputs } from '@happy-pixels/input-forge';
+ *
+ * // 1. Create your commands
+ * class JumpCommand extends Command {
+ *     trigger() { console.log('Jump!'); }
+ * }
+ *
+ * // 2. Define an input map
+ * const inputMap = {
+ *     id: 'gameplay',
+ *     singleInput: {
+ *         jump: {
+ *             keyboardInput: Inputs.KEYBOARD_SPACE,
+ *             controllerInput: Inputs.CONTROLLER_FACE_BOTTOM,
+ *             command: new JumpCommand()
+ *         }
+ *     }
+ * };
+ *
+ * // 3. Create the manager and set the input map
+ * const manager = new InputManager();
+ * manager.setInputMap(inputMap);
+ *
+ * // 4. Start the tick loop (required for update events and TickCommands)
+ * manager.startTick();
+ *
+ * // 5. Clean up when done
+ * manager.destroy();
+ * ```
+ *
+ * ## Input Map Stacking
+ * InputManager supports stacking input maps for context switching (e.g., gameplay vs menu):
+ * ```typescript
+ * manager.setInputMap(gameplayMap);  // Base map
+ * manager.pushInputMap(pauseMenuMap); // Overlay - now active
+ * manager.popInputMap();              // Back to gameplay
+ * ```
+ *
+ * ## Custom Inputs
+ * Trigger inputs programmatically (e.g., from touch controls):
+ * ```typescript
+ * manager.triggerCustomInput('my_action');
+ * manager.triggerCustomAxesInput('virtual_stick', { x: 0.5, y: -0.5 });
+ * ```
+ */
 export class InputManager {
     disconnect$ = new Subject();
     inputMapStack;
@@ -12,7 +67,44 @@ export class InputManager {
     customSource;
     tickEnabled = false;
     lastTickTime = 0;
-    constructor(gamepadFps = 60, gamepadDeadZone = 0.1) {
+    activeCommands = new Set();
+    axesThrottleMs;
+    _activeInputDevice$ = new BehaviorSubject(null);
+    /**
+     * Observable that emits when the active input device changes.
+     * Useful for switching button prompts between keyboard and controller styles.
+     *
+     * Emits:
+     * - `'keyboard'` - When keyboard input is detected
+     * - `'xbox'` - When an Xbox controller is used
+     * - `'playstation'` - When a PlayStation controller is used
+     * - `'other_controller'` - When another gamepad is used
+     * - `null` - Initial state before any input
+     *
+     * @example
+     * ```typescript
+     * manager.activeInputDevice$.subscribe((device) => {
+     *     if (device === 'keyboard') {
+     *         showKeyboardPrompts();
+     *     } else if (device === 'xbox') {
+     *         showXboxPrompts();
+     *     } else if (device === 'playstation') {
+     *         showPlayStationPrompts();
+     *     }
+     * });
+     * ```
+     */
+    activeInputDevice$ = this._activeInputDevice$.pipe(distinctUntilChanged());
+    /**
+     * Creates a new InputManager instance.
+     * @param gamepadFps - Polling rate for gamepad inputs (default: 60, range: 1-120)
+     * @param gamepadDeadZone - Dead zone threshold for gamepad sticks (default: 0.1, range: 0-1)
+     * @param axesThrottleMs - Optional throttle for axis update events in milliseconds. When set,
+     *                         axis 'update' events will be throttled to reduce processing overhead.
+     *                         Trigger and release events are never throttled. (default: undefined/no throttle)
+     */
+    constructor(gamepadFps = 60, gamepadDeadZone = 0.1, axesThrottleMs) {
+        this.axesThrottleMs = axesThrottleMs;
         this.inputMapStack = new InputMapStack();
         this.keyboardSource = new KeyboardSource();
         this.gamepadSource = new GamepadSource(gamepadFps, gamepadDeadZone);
@@ -20,6 +112,30 @@ export class InputManager {
         this.setupEventHandlers();
     }
     setupEventHandlers() {
+        // Track keyboard as active input device
+        this.keyboardSource.singleInputEvent$
+            .pipe(takeUntil(this.disconnect$), filter((event) => event.type === 'trigger'))
+            .subscribe(() => {
+            this._activeInputDevice$.next(InputDeviceType.Keyboard);
+        });
+        // Track gamepad as active input device (buttons)
+        this.gamepadSource.singleInputEvent$
+            .pipe(takeUntil(this.disconnect$), filter((event) => event.type === 'trigger'))
+            .subscribe(() => {
+            const controllerType = this.gamepadSource.getControllerType();
+            if (controllerType) {
+                this._activeInputDevice$.next(controllerType);
+            }
+        });
+        // Track gamepad as active input device (axes/sticks)
+        this.gamepadSource.axesInputEvent$
+            .pipe(takeUntil(this.disconnect$), filter((event) => event.type === 'trigger'))
+            .subscribe(() => {
+            const controllerType = this.gamepadSource.getControllerType();
+            if (controllerType) {
+                this._activeInputDevice$.next(controllerType);
+            }
+        });
         merge(this.keyboardSource.singleInputEvent$, this.gamepadSource.singleInputEvent$, this.customSource.singleInputEvent$)
             .pipe(takeUntil(this.disconnect$))
             .subscribe((event) => {
@@ -29,33 +145,31 @@ export class InputManager {
             const commands = this.inputMapStack.getCommandsForSingleInput(event.key);
             const axesCommands = this.inputMapStack.getAxesCommandsForKey(event.key);
             commands.forEach((command) => {
-                switch (event.type) {
-                    case 'trigger':
-                        command.trigger();
-                        break;
-                    case 'update':
-                        command.update();
-                        break;
-                    case 'release':
-                        command.release();
-                        break;
-                }
+                this.executeCommand(command, event.type);
             });
             axesCommands.forEach(({ command, axis }) => {
-                switch (event.type) {
-                    case 'trigger':
-                        command.trigger(axis);
-                        break;
-                    case 'update':
-                        command.update(axis);
-                        break;
-                    case 'release':
-                        command.release();
-                        break;
-                }
+                this.executeAxesCommand(command, event.type, axis);
             });
         });
-        merge(this.gamepadSource.axesInputEvent$, this.customSource.axesInputEvent$)
+        const axesEvents$ = merge(this.gamepadSource.axesInputEvent$, this.customSource.axesInputEvent$);
+        // Trigger and release events always pass through immediately
+        axesEvents$
+            .pipe(takeUntil(this.disconnect$), filter((event) => event.type !== 'update'))
+            .subscribe((event) => {
+            if (this.inputMapStack.isEmpty()) {
+                return;
+            }
+            const commands = this.inputMapStack.getCommandsForAxesInput(event.name);
+            commands.forEach((command) => {
+                this.executeAxesCommand(command, event.type, event.axes);
+            });
+        });
+        // Update events can be optionally throttled
+        let updateEvents$ = axesEvents$.pipe(filter((event) => event.type === 'update'));
+        if (this.axesThrottleMs !== undefined && this.axesThrottleMs > 0) {
+            updateEvents$ = updateEvents$.pipe(throttleTime(this.axesThrottleMs, undefined, { leading: true, trailing: true }));
+        }
+        updateEvents$
             .pipe(takeUntil(this.disconnect$))
             .subscribe((event) => {
             if (this.inputMapStack.isEmpty()) {
@@ -63,20 +177,48 @@ export class InputManager {
             }
             const commands = this.inputMapStack.getCommandsForAxesInput(event.name);
             commands.forEach((command) => {
-                switch (event.type) {
-                    case 'trigger':
-                        command.trigger(event.axes);
-                        break;
-                    case 'update':
-                        command.update(event.axes);
-                        break;
-                    case 'release':
-                        command.release();
-                        break;
-                }
+                this.executeAxesCommand(command, event.type, event.axes);
             });
         });
     }
+    executeCommand(command, eventType) {
+        switch (eventType) {
+            case 'trigger':
+                command.trigger();
+                this.activeCommands.add(command);
+                break;
+            case 'update':
+                command.update();
+                break;
+            case 'release':
+                command.release();
+                this.activeCommands.delete(command);
+                break;
+        }
+    }
+    executeAxesCommand(command, eventType, axes) {
+        switch (eventType) {
+            case 'trigger':
+                command.trigger(axes);
+                this.activeCommands.add(command);
+                break;
+            case 'update':
+                command.update(axes);
+                break;
+            case 'release':
+                command.release();
+                this.activeCommands.delete(command);
+                break;
+        }
+    }
+    /**
+     * Starts the tick loop for continuous updates.
+     * Required for:
+     * - `update()` events on held inputs
+     * - `TickCommand.tick()` calls
+     *
+     * Call `stopTick()` or `destroy()` to stop the loop.
+     */
     startTick() {
         if (this.tickEnabled) {
             return;
@@ -85,6 +227,9 @@ export class InputManager {
         this.lastTickTime = performance.now();
         this.runTickLoop();
     }
+    /**
+     * Stops the tick loop. Commands will no longer receive update or tick events.
+     */
     stopTick() {
         this.tickEnabled = false;
     }
@@ -105,38 +250,137 @@ export class InputManager {
         requestAnimationFrame(() => this.runTickLoop());
     }
     // ==================== Input Map Management ====================
+    /**
+     * Pushes an input map onto the stack, making it the active map.
+     * The previous map remains in the stack and will become active again when this map is popped.
+     * Use this for temporary contexts like pause menus or dialog boxes.
+     * @param inputMap - The input map to push
+     */
     pushInputMap(inputMap) {
         this.inputMapStack.push(inputMap);
     }
+    /**
+     * Replaces all input maps with a single new map.
+     * Use this to set the primary input map or switch between major game states.
+     * @param inputMap - The input map to set
+     */
     setInputMap(inputMap) {
         this.inputMapStack.set(inputMap);
     }
+    /**
+     * Removes the top input map from the stack.
+     * The next map in the stack becomes active. Does nothing if the stack is empty.
+     */
     popInputMap() {
         this.inputMapStack.pop();
     }
+    /**
+     * Checks if an input map with the given ID exists anywhere in the stack.
+     * @param id - The input map ID to search for
+     * @returns True if the map exists in the stack
+     */
     hasInputMap(id) {
         return this.inputMapStack.has(id);
     }
+    /**
+     * Removes a specific input map from anywhere in the stack by ID.
+     * @param id - The input map ID to remove
+     */
     removeInputMap(id) {
         this.inputMapStack.remove(id);
     }
+    /**
+     * Gets the ID of the currently active input map.
+     * @returns The active map's ID, or null if no map is set
+     */
     currentInputMap() {
         return this.inputMapStack.getCurrentId();
     }
     // ==================== Custom Input API ====================
+    /**
+     * Triggers a custom single input. Use this for virtual buttons, touch controls, etc.
+     * The input key must match a `customInput` field in your input map.
+     * @param input - The custom input key to trigger
+     */
     triggerCustomInput(input) {
         this.customSource.triggerInput(input);
     }
+    /**
+     * Triggers a custom axes input. Use this for virtual joysticks, touch controls, etc.
+     * The name must match a `customAxesInput` field in your input map.
+     * @param name - The custom axes input name
+     * @param axes - The axis values as `{x, y}` or `[x, y]`
+     */
     triggerCustomAxesInput(name, axes) {
         this.customSource.triggerAxesInput(name, axes);
     }
+    /**
+     * Updates a custom axes input with new values.
+     * @param name - The custom axes input name
+     * @param axes - The new axis values as `{x, y}` or `[x, y]`
+     */
     updateCustomAxesInput(name, axes) {
         this.customSource.updateAxesInput(name, axes);
     }
+    /**
+     * Releases a custom axes input (sets axes to neutral/center).
+     * @param name - The custom axes input name to release
+     */
     releaseCustomAxesInput(name) {
         this.customSource.releaseAxesInput(name);
     }
+    // ==================== State Queries ====================
+    /**
+     * Checks if a specific input key is currently active (pressed/held).
+     * Checks across all input sources (keyboard, gamepad).
+     * @param key - The input key to check (e.g., `Inputs.KEYBOARD_SPACE`, `Inputs.CONTROLLER_FACE_BOTTOM`)
+     * @returns True if the input is currently active
+     *
+     * @example
+     * ```typescript
+     * if (manager.isInputActive(Inputs.KEYBOARD_SHIFT)) {
+     *     // Shift is being held
+     * }
+     * ```
+     */
+    isInputActive(key) {
+        const keyboardState = this.keyboardSource.getState();
+        if (keyboardState.singleInputs.activeInputs.has(key)) {
+            return true;
+        }
+        const gamepadState = this.gamepadSource.getState();
+        if (gamepadState.singleInputs.activeInputs.has(key)) {
+            return true;
+        }
+        return false;
+    }
+    /**
+     * Gets all currently active commands (triggered but not yet released).
+     * Useful for debugging or displaying active input state.
+     * @returns Array of currently active Command instances
+     *
+     * @example
+     * ```typescript
+     * const active = manager.getActiveCommands();
+     * console.log(`Active commands: ${active.length}`);
+     * ```
+     */
+    getActiveCommands() {
+        return Array.from(this.activeCommands);
+    }
+    /**
+     * Gets the current active input device type.
+     * @returns The current input device type, or null if no input has been detected yet
+     */
+    getActiveInputDevice() {
+        return this._activeInputDevice$.getValue();
+    }
     // ==================== Cleanup ====================
+    /**
+     * Destroys the InputManager and releases all resources.
+     * Call this when you're done with the manager (e.g., when leaving a scene).
+     * After calling destroy, the manager should not be used again.
+     */
     destroy() {
         this.stopTick();
         this.disconnect$.next();
@@ -145,6 +389,7 @@ export class InputManager {
         this.gamepadSource.destroy();
         this.customSource.destroy();
         this.inputMapStack.clear();
+        this.activeCommands.clear();
     }
 }
 //# sourceMappingURL=input-manager.js.map
