@@ -53,14 +53,14 @@ export type SingleInputEntry = RequireAtLeastOne<
  * ## Example
  * ```typescript
  * const wasdConfig: KeyboardAxesConfig = {
- *     vertical: { up: 'w', down: 's' },
- *     horizontal: { left: 'a', right: 'd' }
+ *     vertical: { up: Inputs.KEYBOARD_W, down: Inputs.KEYBOARD_S },
+ *     horizontal: { left: Inputs.KEYBOARD_A, right: Inputs.KEYBOARD_D }
  * };
  *
  * // Arrow keys example:
  * const arrowConfig: KeyboardAxesConfig = {
- *     vertical: { up: 'arrowup', down: 'arrowdown' },
- *     horizontal: { left: 'arrowleft', right: 'arrowright' }
+ *     vertical: { up: Inputs.KEYBOARD_UP, down: Inputs.KEYBOARD_DOWN },
+ *     horizontal: { left: Inputs.KEYBOARD_LEFT, right: Inputs.KEYBOARD_RIGHT }
  * };
  * ```
  */
@@ -107,8 +107,8 @@ type AxesInputEntryBase = {
  * ```typescript
  * const movement: AxesInputEntry = {
  *     keyboardAxes: {
- *         vertical: { up: 'w', down: 's' },
- *         horizontal: { left: 'a', right: 'd' }
+ *         vertical: { up: Inputs.KEYBOARD_W, down: Inputs.KEYBOARD_S },
+ *         horizontal: { left: Inputs.KEYBOARD_A, right: Inputs.KEYBOARD_D }
  *     },
  *     controllerStick: Inputs.CONTROLLER_LEFT_STICK,
  *     command: new MoveCommand()
@@ -126,9 +126,9 @@ export type AxesInputEntry = RequireAtLeastOne<
  * ## Example
  * ```typescript
  * const singleInputs: SingleInputMap = {
- *     jump: { keyboardInput: 'space', command: jumpCmd },
- *     attack: { keyboardInput: 'j', controllerInput: 'face_right', command: attackCmd },
- *     pause: { keyboardInput: 'escape', controllerInput: 'start', command: pauseCmd }
+ *     jump: { keyboardInput: Inputs.KEYBOARD_SPACE, command: jumpCmd },
+ *     attack: { keyboardInput: Inputs.KEYBOARD_J, controllerInput: Inputs.CONTROLLER_FACE_RIGHT, command: attackCmd },
+ *     pause: { keyboardInput: Inputs.KEYBOARD_ESCAPE, controllerInput: Inputs.CONTROLLER_START, command: pauseCmd }
  * };
  * ```
  */
@@ -142,8 +142,8 @@ export type SingleInputMap = {
  * ## Example
  * ```typescript
  * const axesInputs: AxesInputMap = {
- *     move: { controllerStick: 'left_stick', command: moveCmd },
- *     look: { controllerStick: 'right_stick', command: lookCmd }
+ *     move: { controllerStick: Inputs.CONTROLLER_LEFT_STICK, command: moveCmd },
+ *     look: { controllerStick: Inputs.CONTROLLER_RIGHT_STICK, command: lookCmd }
  * };
  * ```
  */
@@ -187,8 +187,8 @@ export type AxesInputMap = {
  *     axesInput: {
  *         move: {
  *             keyboardAxes: {
- *                 vertical: { up: 'w', down: 's' },
- *                 horizontal: { left: 'a', right: 'd' }
+ *                 vertical: { up: Inputs.KEYBOARD_W, down: Inputs.KEYBOARD_S },
+ *                 horizontal: { left: Inputs.KEYBOARD_A, right: Inputs.KEYBOARD_D }
  *             },
  *             controllerStick: Inputs.CONTROLLER_LEFT_STICK,
  *             command: new MoveCommand()

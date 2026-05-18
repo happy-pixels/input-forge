@@ -124,7 +124,7 @@ const inputMap = {
 Input maps define the relationship between inputs and commands.
 
 ```typescript
-import type { InputMap } from '@happy-pixels/input-forge';
+import { Inputs, type InputMap } from '@happy-pixels/input-forge';
 
 const gameplayMap: InputMap = {
     id: 'gameplay',
@@ -147,8 +147,8 @@ const gameplayMap: InputMap = {
     axesInput: {
         move: {
             keyboardAxes: {
-                vertical: { up: 'w', down: 's' },
-                horizontal: { left: 'a', right: 'd' }
+                vertical: { up: Inputs.KEYBOARD_W, down: Inputs.KEYBOARD_S },
+                horizontal: { left: Inputs.KEYBOARD_A, right: Inputs.KEYBOARD_D }
             },
             controllerStick: Inputs.CONTROLLER_LEFT_STICK,
             command: new MoveCommand()
